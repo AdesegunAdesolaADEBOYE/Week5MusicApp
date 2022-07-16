@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
-#from rest_framework_simplejwt import api_settings
+from django.conf import settings
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import permissions
 from rest_framework import generics
 from rest_framework import status
@@ -8,8 +9,8 @@ from rest_framework.response import Response
 from .models import Song
 from .serializers import SongSerializer, TokenSerializer
 
-#jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
-#jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+#jwt_payload_handler = settings.JWT_PAYLOAD_HANDLER
+#jwt_encode_handler = settings.JWT_ENCODE_HANDLER
 
 # Create your views here.
 
@@ -55,9 +56,9 @@ class LoginView(generics.CreateAPIView):
             login(request, user)
             serializer = TokenSerializer(data={
                 # using drf jwt utility functions to generate a token
-                #"token": jwt_encode_handler(
-                 #   jwt_payload_handler(user)
-                #)
+                "token": jwt_encode_handler(
+                    'token_obtain_pair'(user)
+                )
                 })
             serializer.is_valid()
             return Response(serializer.data)
