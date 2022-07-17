@@ -35,7 +35,7 @@ class BaseViewTest(APITestCase):
         )
 
     def setUp(self):
-        # create a admin user
+        # create an admin user
         self.user = User.objects.create_superuser(
             username="test_user",
             email="test@mail.com",
