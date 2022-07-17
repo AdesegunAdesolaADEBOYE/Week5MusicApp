@@ -14,9 +14,6 @@ from .exceptions import InvalidToken, TokenError
 from .models import Song
 from .serializers import SongSerializer, TokenSerializer
 
-#jwt_payload_handler = settings.JWT_PAYLOAD_HANDLER
-#jwt_encode_handler = settings.JWT_ENCODE_HANDLER
-
 # Create your views here.
 
 class MusicLibraryView(generics.ListAPIView):
