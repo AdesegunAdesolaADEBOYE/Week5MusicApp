@@ -2,7 +2,7 @@ from django.utils.module_loading import import_string
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.conf import settings
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework import permissions
 from rest_framework import generics, status, exceptions
@@ -43,7 +43,6 @@ class LoginView(generics.CreateAPIView):
     # This permission class will overide the global permission
     # class setting
     permission_classes = (permissions.AllowAny,)
-
     queryset = User.objects.all()
     serializer_class = TokenSerializer
 
@@ -56,6 +55,31 @@ class LoginView(generics.CreateAPIView):
             raise InvalidToken(e.args[0])
 
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
+class RegisterUsersView(generics.CreateAPIView):
+    """
+    POST auth/register/
+    """
+    permission_classes = (permissions.AllowAny,)
+    queryset = User.objects.all()
+    serializer_class = TokenSerializer
+
+    def post(self, request, *args, **kwargs):
+        username = request.data.get("username", "")
+        password = request.data.get("password", "")
+        email = request.data.get("email", "")
+        if not username and not password and not email:
+            return Response(
+                data={
+                    "message": "username, password and email is required to register a user"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        new_user = User.objects.create_user(
+            username=username, password=password, email=email
+        )
+        return Response(status=status.HTTP_201_CREATED)
+
 
 """
     def post(self, request, *args, **kwargs):
@@ -90,25 +114,4 @@ class JwtAuthentication(authentication.BaseAuthentication):
 
                 # If token does not exist, return None so that another authentication class can handle authentication
 """
-class RegisterUsersView(generics.CreateAPIView):
-    """
-    POST auth/register/
-    """
-    permission_classes = (permissions.AllowAny,)
-
-    def post(self, request, *args, **kwargs):
-        username = request.data.get("username", "")
-        password = request.data.get("password", "")
-        email = request.data.get("email", "")
-        if not username and not password and not email:
-            return Response(
-                data={
-                    "message": "username, password and email is required to register a user"
-                },
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        new_user = User.objects.create_user(
-            username=username, password=password, email=email
-        )
-        return Response(status=status.HTTP_201_CREATED)
 
