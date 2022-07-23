@@ -1,5 +1,5 @@
 from django.utils.module_loading import import_string
-from django.contrib.auth.models import User
+from users.models import NewUser
 from django.contrib.auth import authenticate, login
 from django.conf import settings
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -43,7 +43,7 @@ class LoginView(generics.CreateAPIView):
     # This permission class will overide the global permission
     # class setting
     permission_classes = (permissions.AllowAny,)
-    queryset = User.objects.all()
+    queryset = NewUser.objects.all()
     serializer_class = TokenSerializer
 
     def post(self, request, *args, **kwargs):
@@ -61,7 +61,7 @@ class RegisterUsersView(generics.CreateAPIView):
     POST auth/register/
     """
     permission_classes = (permissions.AllowAny,)
-    queryset = User.objects.all()
+    queryset = NewUser.objects.all()
     serializer_class = TokenSerializer
 
     def post(self, request, *args, **kwargs):
@@ -75,7 +75,7 @@ class RegisterUsersView(generics.CreateAPIView):
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
-        new_user = User.objects.create_user(
+        new_user = NewUser.objects.create_user(
             username=username, password=password, email=email
         )
         return Response(status=status.HTTP_201_CREATED)

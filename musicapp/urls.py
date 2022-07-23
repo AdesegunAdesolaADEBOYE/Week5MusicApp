@@ -28,8 +28,8 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     #re_path('api/(?P<version>(v1|v2))/', include('music_api.urls')),
-    path('', include ('music_api.urls')),
+    path('api/', include ('music_api.urls')),
     #path('auth/', include ('authentication.urls')),
-    #path('users/', include ('users.urls')),
+    path('users/', include ('users.urls')),
 ]
 
