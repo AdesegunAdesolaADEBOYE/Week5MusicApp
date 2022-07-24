@@ -63,8 +63,8 @@ REST_FRAMEWORK = {
     # inside the Rest framework settings dictionary, add the auth settings
     # Authentication settings
     'DEFAULT_AUTHENTICATION_CLASSES': (
-    'rest_framework.authentication.SessionAuthentication',
-    'rest_framework.authentication.TokenAuthentication',
+    # 'rest_framework.authentication.SessionAuthentication',
+    # 'rest_framework.authentication.TokenAuthentication',
     'rest_framework_simplejwt.authentication.JWTAuthentication', 
     ),
 
