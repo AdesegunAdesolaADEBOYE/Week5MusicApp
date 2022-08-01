@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'music_api',
     'authentication',
     'users',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 MIDDLEWARE = [
@@ -82,8 +83,8 @@ REST_FRAMEWORK = {
 SIMPLE_JWT={
     'ACCESS_TOKEN_LIFETIME': datetime.timedelta(hours=3),
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=4),
-    'ROTATE_REFRESH_TOKENS': False,
-    'BLACKLIST_AFTER_ROTATION': False,
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
     'UPDATE_LAST_LOGIN': False,
 
     'ALGORITHM': 'HS256',
