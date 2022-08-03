@@ -1,12 +1,14 @@
 from .models import Song
 from .serializers import SongSerializer
+from rest_framework.permissions import SAFE_METHODS, IsAuthenticated, IsAuthenticatedOrReadOnly
 from users.models import NewUser
 from rest_framework import permissions
-from rest_framework import generics, status, exceptions
+from rest_framework import generics, viewsets, filters, status, exceptions
 from django.conf import settings
+from django.shortcuts import get_list_or_404, get_object_or_404
+from rest_framework.response import Response
 
 
-#from rest_framework.response import Response
 #from rest_framework_simplejwt.tokens import RefreshToken
 #from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 #from django.utils.module_loading import import_string
@@ -17,25 +19,62 @@ from django.conf import settings
 
 # Create your views here.
 
-class MusicLibraryView(generics.ListAPIView):
-    """
-    Provides a get method handler.
-    """
-    queryset = Song.objects.all()
+class SongUserWritePermission(permissions.BasePermission):
+    message = 'Editing Playlist of songs is restricted to the user only.'
+
+def has_object_permission(self, request, view, obj):
+
+    if request.method in SAFE_METHODS:
+        return True
+    
+    return obj.user == request.user
+
+class MusicLibrary(viewsets.ModelViewSet):
+    permission_classes = [SongUserWritePermission]
     serializer_class = SongSerializer
-    permission_classes = (permissions.AllowAny,)
+
+    def get_object(self, queryset=None, **kwargs):
+        item = self.kwargs.get('pk')
+        return get_object_or_404(Song, title=item)
+    
+    #Define Custom Queryset
+    def get_queryset(self):
+        return Song.objects.all()
 
 
-class PlaylistsView(generics.ListCreateAPIView):
-    queryset = Song.objects.all()
-    serializer_class = SongSerializer
-    permission_classes = (permissions.AllowAny,)
+# class MusicLibrary(viewsets.ViewSet):
+#     permission_classes = [IsAuthenticated]
+#     queryset = Song.objects.all()
+
+#     def list(self, request):
+#         serializer_class = SongSerializer(self.queryset, many=True)
+#         return Response(serializer_class.data)
+
+#     def retrieve(self, request, pk=None):
+#         song = get_object_or_404(self.queryset, pk=pk)
+#         serializer_class = SongSerializer(song)
+#         return Response(serializer_class.data)
 
 
-class DetailSongView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Song.objects.all()
-    serializer_class = SongSerializer
-    permission_classes = (permissions.AllowAny,)
+# class MusicLibraryView(generics.ListAPIView):
+#     """
+#     Provides a get method handler.
+#     """
+#     queryset = Song.objects.all()
+#     serializer_class = SongSerializer
+#     permission_classes = (permissions.AllowAny,)
+
+
+# class PlaylistsView(generics.ListCreateAPIView):
+#     queryset = Song.objects.all()
+#     serializer_class = SongSerializer
+#     permission_classes = (permissions.AllowAny,)
+
+
+# class DetailSongView(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = Song.objects.all()
+#     serializer_class = SongSerializer
+#     permission_classes = (permissions.AllowAny,)
 
 
 # class LoginView(generics.CreateAPIView):
