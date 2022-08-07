@@ -1,0 +1,9 @@
+[run]
+source=authentication/,music_api/,users/,
+omit=
+menv
+*/migrations/*
+*/tests/*
+*/__init__.py
+
+
